@@ -1,7 +1,7 @@
 %global pre_release %{nil}
 %define pkgname mozjs
-%define api 78
-%define major 78
+%define api 91
+%define major 91
 %define majorlib 0
 %define libmozjs %mklibname %{pkgname} %{api} %{major}
 %define libmozjs_devel %mklibname %{pkgname} %{api} -d
@@ -15,9 +15,9 @@
 %endif
 
 Summary:	JavaScript interpreter and libraries
-Name:		mozjs78
-Version:	78.15.0
-Release:	2
+Name:		mozjs91
+Version:	91.7.0
+Release:	1
 License:	MPLv2.0 and BSD and GPLv2+ and GPLv3+ and LGPLv2.1 and LGPLv2.1+
 URL:		https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey/Releases/%{major}
 Source0:        https://ftp.mozilla.org/pub/firefox/releases/%{version}esr/source/firefox-%{version}esr.source.tar.xz
