@@ -1,0 +1,40 @@
+diff -up firefox-78.2.0/js/src/jit-test/jit_test.py.30~ firefox-78.2.0/js/src/jit-test/jit_test.py
+--- firefox-78.2.0/js/src/jit-test/jit_test.py.30~	2020-09-11 23:51:35.498625528 +0200
++++ firefox-78.2.0/js/src/jit-test/jit_test.py	2020-09-11 23:53:23.065412236 +0200
+@@ -146,7 +146,7 @@ def main(argv):
+                     help='With --write-failures=FILE, additionally write the'
+                     ' output of failed tests to [FILE]')
+     op.add_argument('--jitflags', dest='jitflags', default='none',
+-                    choices=valid_jitflags(),
++                    choices=list(valid_jitflags()),
+                     help='IonMonkey option combinations (default %(default)s).')
+     op.add_argument('--ion', dest='jitflags', action='store_const', const='ion',
+                     help='Run tests once with --ion-eager and once with'
+diff -up firefox-78.2.0/js/src/tests/lib/manifest.py.30~ firefox-78.2.0/js/src/tests/lib/manifest.py
+--- firefox-78.2.0/js/src/tests/lib/manifest.py.30~	2020-09-11 23:51:35.498625528 +0200
++++ firefox-78.2.0/js/src/tests/lib/manifest.py	2020-09-11 23:54:20.868368698 +0200
+@@ -168,7 +168,10 @@ class XULInfoTester:
+                 '-e', self.js_prologue,
+                 '-e', 'print(!!({}))'.format(cond)
+             ]
+-            p = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE, universal_newlines=True)
++            try:
++                p = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE, universal_newlines=True, encoding="utf-8")
++            except TypeError:
++                p = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE, universal_newlines=True)
+             out, err = p.communicate()
+             if out in ('true\n', 'true\r\n'):
+                 ans = True
+diff -up firefox-78.2.0/js/src/tests/lib/tasks_unix.py.30~ firefox-78.2.0/js/src/tests/lib/tasks_unix.py
+--- firefox-78.2.0/js/src/tests/lib/tasks_unix.py.30~	2020-08-17 20:33:45.000000000 +0200
++++ firefox-78.2.0/js/src/tests/lib/tasks_unix.py	2020-09-11 23:51:35.498625528 +0200
+@@ -203,6 +203,9 @@ def reap_zombies(tasks, timeout):
+         if os.WIFSIGNALED(status):
+             returncode = -os.WTERMSIG(status)
+ 
++        ended.out=[x.decode('utf-8') for x in ended.out]
++        ended.err=[x.decode('utf-8') for x in ended.err]
++
+         finished.append(
+             TestOutput(
+                 ended.test,

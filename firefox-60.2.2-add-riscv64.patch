@@ -1,0 +1,45 @@
+diff -up firefox-68.5.0/build/moz.configure/init.configure.p32~ firefox-68.5.0/build/moz.configure/init.configure
+--- firefox-68.5.0/build/moz.configure/init.configure.p32~	2020-02-07 01:26:51.000000000 +0100
++++ firefox-68.5.0/build/moz.configure/init.configure	2020-03-11 19:01:01.144836575 +0100
+@@ -730,6 +730,9 @@ def split_triplet(triplet, allow_unknown
+     elif cpu.startswith('aarch64'):
+         canonical_cpu = 'aarch64'
+         endianness = 'little'
++    elif cpu.startswith('riscv64'):
++        canonical_cpu = 'riscv64'
++        endianness = 'little'
+     elif cpu == 'sh4':
+         canonical_cpu = 'sh4'
+         endianness = 'little'
+diff -up firefox-68.5.0/js/src/jit/AtomicOperations.h.p32~ firefox-68.5.0/js/src/jit/AtomicOperations.h
+--- firefox-68.5.0/js/src/jit/AtomicOperations.h.p32~	2020-03-11 19:01:01.144836575 +0100
++++ firefox-68.5.0/js/src/jit/AtomicOperations.h	2020-03-11 19:02:01.280833657 +0100
+@@ -393,6 +393,8 @@ inline bool AtomicOperations::isLockfree
+     defined(__PPC64LE__) || defined(__alpha__) || defined(__hppa__) ||  \
+     defined(__sh__) || defined(__s390__) || defined(__s390x__)
+ #  include "jit/shared/AtomicOperations-feeling-lucky.h"
++#elif defined(__riscv)
++#include "jit/none/AtomicOperations-feeling-lucky.h"
+ #else
+ #  error "No AtomicOperations support provided for this platform"
+ #endif
+diff -up firefox-68.5.0/mfbt/tests/TestPoisonArea.cpp.p32~ firefox-68.5.0/mfbt/tests/TestPoisonArea.cpp
+diff -up firefox-68.5.0/python/mozbuild/mozbuild/configure/constants.py.p32~ firefox-68.5.0/python/mozbuild/mozbuild/configure/constants.py
+--- firefox-68.5.0/python/mozbuild/mozbuild/configure/constants.py.p32~	2020-02-07 01:27:24.000000000 +0100
++++ firefox-68.5.0/python/mozbuild/mozbuild/configure/constants.py	2020-03-11 19:01:01.144836575 +0100
+@@ -50,6 +50,7 @@ CPU_bitness = {
+     'mips64': 64,
+     'ppc': 32,
+     'ppc64': 64,
++    'riscv64': 64,
+     's390': 32,
+     's390x': 64,
+     'sh4': 32,
+@@ -89,6 +90,7 @@ CPU_preprocessor_checks = OrderedDict((
+     ('mips64', '__mips64'),
+     ('mips32', '__mips__'),
+     ('sh4', '__sh__'),
++    ('riscv64', 'defined(__riscv) && defined(__riscv_xlen) && __riscv_xlen == 64'),
+ ))
+ 
+ assert sorted(CPU_preprocessor_checks.keys()) == sorted(CPU.POSSIBLE_VALUES)
