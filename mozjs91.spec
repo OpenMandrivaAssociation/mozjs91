@@ -58,6 +58,8 @@ Patch41:	Save-and-restore-non-volatile-x28-on-ARM64-for-generated-unboxed-object
 #Patch51:	mozjs-52.8.1-fix-crash-on-startup.patch
 Patch52:	mozjs-68-compile.patch
 
+Patch60:	shot-in-the-dark.patch
+
 #BuildRequires:  autoconf
 BuildRequires:	pkgconfig(icu-i18n)
 BuildRequires:	pkgconfig(nspr)
@@ -132,6 +134,7 @@ pushd ../..
 #patch50 -p1 -b .50~
 #%patch51 -p1 -b .51~
 %patch52 -p1 -b .52~
+%patch60 -p1 -b .60~
 popd
 
 # Remove zlib directory (to be sure using system version)
