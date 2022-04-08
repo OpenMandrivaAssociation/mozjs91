@@ -144,11 +144,19 @@ rm -rf ../../modules/zlib
 #done
 #cd ../..
 
-TOP="$(pwd)"
-cd autoconf-2.13
-./configure --prefix=$TOP/ac213bin
-%make_build
-%make_build install
+#TOP="$(pwd)"
+#cd autoconf-2.13
+#./configure --prefix=$TOP/ac213bin
+#make_build
+#make_build install
+
+# Use bundled autoconf
+export M4=m4
+export AWK=awk
+export AC_MACRODIR=/builddir/build/BUILD/firefox-%{version}/build/autoconf/
+ 
+sh ../../build/autoconf/autoconf.sh --localdir=/builddir/build/BUILD/firefox-%{version}/js/src configure.in > configure
+chmod +x configure
 
 %build
 %set_build_flags
