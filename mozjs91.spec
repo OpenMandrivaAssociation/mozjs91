@@ -29,6 +29,8 @@ Patch02:	https://src.fedoraproject.org/rpms/mozjs78/raw/master/f/copy-headers.pa
 Patch03:	https://src.fedoraproject.org/rpms/mozjs78/raw/master/f/tests-increase-timeout.patch
 Patch09:	https://src.fedoraproject.org/rpms/mozjs78/raw/master/f/icu_sources_data.py-Decouple-from-Mozilla-build-system.patch
 Patch10:	https://src.fedoraproject.org/rpms/mozjs78/raw/master/f/icu_sources_data-Write-command-output-to-our-stderr.patch
+
+Patch11:        https://src.fedoraproject.org/rpms/mozjs91/blob/rawhide/f/remove-sloppy-m4-detection-from-bundled-autoconf.patch
  
 # Build fixes - https://hg.mozilla.org/mozilla-central/rev/ca36a6c4f8a4a0ddaa033fdbe20836d87bbfb873
 Patch12:	https://src.fedoraproject.org/rpms/mozjs78/raw/master/f/emitter.patch
@@ -106,7 +108,7 @@ pushd ../..
 %patch03 -p1 -b .03~
 %patch09 -p1 -b .09~
 %patch10 -p1 -b .10~
- 
+%patch11 -p1 -b .11~ 
 %patch12 -p1 -b .12~
 %patch14 -p1 -b .14~
 %patch15 -p1 -b .15~
