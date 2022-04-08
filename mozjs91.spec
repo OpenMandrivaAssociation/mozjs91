@@ -46,7 +46,7 @@ Patch17:	https://src.fedoraproject.org/rpms/mozjs78/raw/master/f/armv7_disable_W
 Patch26:	https://src.fedoraproject.org/rpms/mozjs68/raw/master/f/build-icu-big-endian.patch
  
 # Support Python 3 in js tests
-Patch30:	https://src.fedoraproject.org/rpms/mozjs68/raw/master/f/jstests_python-3.patch
+#Patch30:	https://src.fedoraproject.org/rpms/mozjs68/raw/master/f/jstests_python-3.patch
 
 # aarch64 fixes for -O2
 Patch40:	Save-x28-before-clobbering-it-in-the-regex-compiler.patch
@@ -125,7 +125,7 @@ pushd ../..
 %endif
  
 # Execute tests with Python 3
-%patch30 -p1 -b .30~
+#patch30 -p1 -b .30~
 
 %patch50 -p1 -b .50~
 #%patch51 -p1 -b .51~
