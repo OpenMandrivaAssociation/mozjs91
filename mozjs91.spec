@@ -1,3 +1,5 @@
+%define _disable_lto 1
+
 %global pre_release %{nil}
 %define pkgname mozjs
 %define api 91
@@ -21,7 +23,6 @@ Release:	1
 License:	MPLv2.0 and BSD and GPLv2+ and GPLv3+ and LGPLv2.1 and LGPLv2.1+
 URL:		https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey/Releases/%{major}
 Source0:        https://ftp.mozilla.org/pub/firefox/releases/%{version}esr/source/firefox-%{version}esr.source.tar.xz
-Source10:	http://ftp.gnu.org/gnu/autoconf/autoconf-2.13.tar.gz
 
 # Patches from Debian mozjs60, rebased for mozjs68:
 Patch01:	https://src.fedoraproject.org/rpms/mozjs78/raw/master/f/fix-soname.patch
@@ -58,9 +59,6 @@ Patch41:	Save-and-restore-non-volatile-x28-on-ARM64-for-generated-unboxed-object
 #Patch51:	mozjs-52.8.1-fix-crash-on-startup.patch
 Patch52:	mozjs-68-compile.patch
 
-Patch60:	shot-in-the-dark.patch
-
-#BuildRequires:  autoconf
 BuildRequires:	pkgconfig(icu-i18n)
 BuildRequires:	pkgconfig(nspr)
 BuildRequires:	pkgconfig(libffi)
@@ -100,7 +98,7 @@ documentation for %{name}. If you like to develop programs using %{name},
 you will need to install %{name}-devel.
 
 %prep
-%setup -q -n firefox-%{version}/js/src -a 10
+%setup -q -n firefox-%{version}/js/src
 
 pushd ../..
 %config_update
@@ -134,41 +132,43 @@ pushd ../..
 #patch50 -p1 -b .50~
 #%patch51 -p1 -b .51~
 %patch52 -p1 -b .52~
-%patch60 -p1 -b .60~
 popd
 
 # Remove zlib directory (to be sure using system version)
 rm -rf ../../modules/zlib
 
-#rm -rf nsprpub
-#cd config/external/
+rm -rf ../../nsprpub
+#cd ../../config/external/
 #for i in freetype2 icu nspr nss sqlite zlib; do
 #	rm -rf $i
 #	mkdir $i
 #	touch $i/moz.build
 #done
-#cd ../..
-
-#TOP="$(pwd)"
-#cd autoconf-2.13
-#./configure --prefix=$TOP/ac213bin
-#make_build
-#make_build install
+#cd ../../js/src
 
 # Use bundled autoconf
 export M4=m4
 export AWK=awk
-export AC_MACRODIR=/builddir/build/BUILD/firefox-%{version}/build/autoconf/
+export AC_MACRODIR=$(pwd)/../../build/autoconf/
  
-sh ../../build/autoconf/autoconf.sh --localdir=/builddir/build/BUILD/firefox-%{version}/js/src configure.in > configure
+pwd
+sh ../../build/autoconf/autoconf.sh --localdir=$(pwd) configure.in > configure
 chmod +x configure
+
+# Don't use stuff removed in python 3.11
+find ../../python -name "*.py" |xargs sed -i -e 's,"rU", "r",g'
+
+# We trust our toolchain. More than we trust hardcodes copied from
+# whatever someone found on a prehistoric brokenbuntu box.
+for i in ../../security/sandbox/chromium/sandbox/linux/system_headers/*_linux_syscalls.h; do
+    echo '#include <asm/unistd.h>' >$i
+done
+
 
 %build
 %set_build_flags
 
-export AUTOCONF="$(pwd)"/ac213bin/bin/autoconf
 export RUSTFLAGS="-C embed-bitcode"
-	
 export CARGO_PROFILE_RELEASE_LTO=true
 export CFLAGS="%{optflags}"
 export CXXFLAGS="$CFLAGS"
@@ -200,7 +200,6 @@ cd ../..
   rm -f config/external/icu/data/icudt*l.dat
 cd -
 %endif
-
 
 %make_build
 
