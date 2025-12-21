@@ -59,6 +59,11 @@ Patch41:	Save-and-restore-non-volatile-x28-on-ARM64-for-generated-unboxed-object
 #Patch51:	mozjs-52.8.1-fix-crash-on-startup.patch
 Patch52:	mozjs-68-compile.patch
 
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	libtool-base
+BuildRequires:	slibtool
+BuildRequires:	make
 BuildRequires:	pkgconfig(icu-i18n)
 BuildRequires:	pkgconfig(nspr)
 BuildRequires:	pkgconfig(libffi)
